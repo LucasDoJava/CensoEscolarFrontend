@@ -1,0 +1,61 @@
+{
+  "stats_overview": {
+    "total_instituicoes": 12345,
+    "total_matriculas": 987654,
+    "anos_disponiveis": [2023, 2024]
+  },
+
+  "matriculas_por_uf": [
+    { "sg_uf": "AM", "total": 120000 },
+    { "sg_uf": "PA", "total": 90000 },
+    { "sg_uf": "RO", "total": 25000 },
+    { "sg_uf": "AC", "total": 18000 },
+    { "sg_uf": "RR", "total": 12000 }
+  ],
+
+  "matriculas_por_regiao": [
+    { "regiao": "Norte", "total": 200000 },
+    { "regiao": "Nordeste", "total": 350000 },
+    { "regiao": "Sudeste", "total": 300000 },
+    { "regiao": "Sul", "total": 100000 },
+    { "regiao": "Centro-Oeste", "total": 80000 }
+  ],
+
+  "matriculas_por_mes": [
+    { "mes": "Jan", "total": 10000 },
+    { "mes": "Fev", "total": 12000 },
+    { "mes": "Mar", "total": 11000 },
+    { "mes": "Abr", "total": 13000 },
+    { "mes": "Mai", "total": 9000 },
+    { "mes": "Jun", "total": 8000 },
+    { "mes": "Jul", "total": 7000 },
+    { "mes": "Ago", "total": 9500 },
+    { "mes": "Set", "total": 10500 },
+    { "mes": "Out", "total": 11500 },
+    { "mes": "Nov", "total": 12500 },
+    { "mes": "Dez", "total": 13500 }
+  ],
+
+  "instituicoes": [
+    {
+      "codentidade": 13013114,
+      "entidade": "ESCOLA MUN RURAL FLORA AGRÍCOLA",
+      "ano": 2024,
+      "qt_mat_bas": 192,
+      "codmunicipio": 1302603,
+      "municipio_nome": "Manaus",
+      "sg_uf": "AM",
+      "coduf": 13
+    },
+    {
+      "codentidade": 1500107,
+      "entidade": "ESCOLA EST. BELÉM CENTRAL",
+      "ano": 2024,
+      "qt_mat_bas": 820,
+      "codmunicipio": 1501402,
+      "municipio_nome": "Belém",
+      "sg_uf": "PA",
+      "coduf": 15
+    }
+  ]
+}
