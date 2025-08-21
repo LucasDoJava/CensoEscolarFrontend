@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from "react";
+import React from "react";
 import { useLocation, Route, Switch } from "react-router-dom";
 
 import AdminNavbar from "components/Navbars/AdminNavbar";
@@ -25,14 +25,13 @@ import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 
 import routes from "routes.js";
 
-import sidebarImage from "assets/img/sidebar-3.jpg";
-
 function Admin() {
-  const [image, setImage] = React.useState(sidebarImage);
+  const [image, setImage] = React.useState("https://img.freepik.com/fotos-premium/predio-principal-da-universidade-de-genebra_633872-3711.jpg"); 
   const [color, setColor] = React.useState("black");
   const [hasImage, setHasImage] = React.useState(true);
   const location = useLocation();
   const mainPanel = React.useRef(null);
+
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/admin") {
@@ -43,11 +42,11 @@ function Admin() {
             key={key}
           />
         );
-      } else {
-        return null;
       }
+      return null;
     });
   };
+
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
@@ -61,6 +60,7 @@ function Admin() {
       element.parentNode.removeChild(element);
     }
   }, [location]);
+
   return (
     <>
       <div className="wrapper">
@@ -86,3 +86,4 @@ function Admin() {
 }
 
 export default Admin;
+
