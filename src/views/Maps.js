@@ -86,13 +86,13 @@ function animateCenterZoom({
 function labelShift(uf) {
   switch (uf) {
     case "DF":
-      return [0.6, -0.3];
+      return [0.0, -0.0];
     case "ES":
-      return [0.6, 0.1];
+      return [0.3, 0.1];
     case "RJ":
-      return [0.5, 0.25];
+      return [0.8, 0.25];
     case "SE":
-      return [0.35, 0.15];
+      return [0.20, 0.10];
     default:
       return [0, 0];
   }
