@@ -1,37 +1,32 @@
-import React, { Component } from "react";
+import React from "react";
 import { useLocation, NavLink } from "react-router-dom";
-
 import { Nav } from "react-bootstrap";
 
-import logo from "assets/img/soft.png";
+import logo from "logo.png";
 
 function Sidebar({ color, image, routes }) {
   const location = useLocation();
-  const activeRoute = (routeName) => {
-    return location.pathname.indexOf(routeName) > -1 ? "active" : "";
-  };
+  const activeRoute = (routeName) =>
+    location.pathname.indexOf(routeName) > -1 ? "active" : "";
+
   return (
     <div className="sidebar" data-image={image} data-color={color}>
       <div
         className="sidebar-background"
-        style={{
-          backgroundImage: "url(" + image + ")"
-        }}
+        style={{ backgroundImage: "url(" + image + ")" }}
       />
       <div className="sidebar-wrapper">
         <div className="logo d-flex align-items-center justify-content-start">
-          <a
-            href=""
-            className="simple-text logo-mini mx-1"
-          >
+          <a href="" className="simple-text logo-mini mx-1">
             <div className="logo-img">
-              <img src={require("assets/img/soft.png")} alt="..." />
+              <img src={logo} alt="School Census" />
             </div>
           </a>
           <a className="simple-text" href="">
             School Census
           </a>
         </div>
+
         <Nav>
           {routes.map((prop, key) => {
             if (!prop.redirect)
