@@ -1,4 +1,3 @@
-
 import React from "react";
 import api from "../services/api";
 import {
@@ -50,7 +49,6 @@ function easeInOutCubic(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-
 function animateCenterZoom({
   startCenter,
   endCenter,
@@ -86,13 +84,13 @@ function animateCenterZoom({
 function labelShift(uf) {
   switch (uf) {
     case "DF":
-      return [0.6, -0.3];
+      return [0.0, -0.0];
     case "ES":
-      return [0.6, 0.1];
+      return [0.3, 0.1];
     case "RJ":
-      return [0.5, 0.25];
+      return [0.8, 0.25];
     case "SE":
-      return [0.35, 0.15];
+      return [0.2, 0.1];
     default:
       return [0, 0];
   }
@@ -111,7 +109,9 @@ export default function Maps() {
     const ac = new AbortController();
     (async () => {
       try {
+        // ✅ rota corrigida para o backend: /matriculas/uf/<int:ano>
         const { data } = await api.get(`/matriculas/uf/${ano}`, { signal: ac.signal });
+
         const list = Array.isArray(data?.dados)
           ? data.dados
           : Array.isArray(data)
@@ -119,7 +119,8 @@ export default function Maps() {
           : [];
         const map = {};
         for (const r of list) {
-          const uf = r.uf || r.sigla;
+          // ✅ adiciona fallback sg_uf
+          const uf = r.uf || r.sigla || r.sg_uf;
           const tot = Number(r.total_matriculas ?? r.total ?? r.matriculas ?? 0);
           if (uf) map[uf] = tot;
         }
@@ -203,13 +204,12 @@ export default function Maps() {
     };
   }, []);
 
-  // render de labels sem duplicar e com contraste alto
   const renderLabels = (geographies) => {
     const seen = new Set();
     return geographies.map((geo) => {
       const name = geo.properties.name;
       const uf = NAME_TO_UF[name] || name;
-      if (seen.has(uf)) return null; // evita "fantasmas" duplicados
+      if (seen.has(uf)) return null;
       seen.add(uf);
 
       const [cx, cy] = geoCentroid(geo);
@@ -218,7 +218,6 @@ export default function Maps() {
 
       return (
         <Marker key={`${geo.rsmKey}-label`} coordinates={[cx + dx, cy + dy]}>
-          {/* oculta label quando outra UF está selecionada */}
           {!isDimmed && (
             <text
               textAnchor="middle"
@@ -285,7 +284,6 @@ export default function Maps() {
               <Geographies geography={geoUrl}>
                 {({ geographies }) => (
                   <>
-                    {/* Estados */}
                     {geographies.map((geo) => {
                       const name = geo.properties.name;
                       const uf = NAME_TO_UF[name] || name;
@@ -301,7 +299,7 @@ export default function Maps() {
                           onClick={() => !animating && handleClick(geo)}
                           fill={exists ? color(v || 0) : "#EEE"}
                           stroke="#bbb"
-                          strokeWidth={isSelected ? 0.6 : 0.4} // borda mais discreta
+                          strokeWidth={isSelected ? 0.6 : 0.4}
                           style={{
                             default: {
                               outline: "none",

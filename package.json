@@ -8,6 +8,8 @@
     "bootstrap": "4.6.0",
     "chart.js": "^3.9.1",
     "chartist": "0.10.1",
+    "d3-geo": "^3.1.1",
+    "d3-geo-projection": "^4.0.0",
     "d3-scale": "^4.0.2",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.9",
