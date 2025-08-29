@@ -103,13 +103,15 @@ export default function Maps() {
   const [zoom, setZoom] = React.useState(1);
   const [selectedUF, setSelectedUF] = React.useState(null);
   const [animating, setAnimating] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const cancelAnimRef = React.useRef(null);
 
   React.useEffect(() => {
     const ac = new AbortController();
+    setLoading(true);
+
     (async () => {
       try {
-        // ✅ rota corrigida para o backend: /matriculas/uf/<int:ano>
         const { data } = await api.get(`/matriculas/uf/${ano}`, { signal: ac.signal });
 
         const list = Array.isArray(data?.dados)
@@ -117,9 +119,9 @@ export default function Maps() {
           : Array.isArray(data)
           ? data
           : [];
+
         const map = {};
         for (const r of list) {
-          // ✅ adiciona fallback sg_uf
           const uf = r.uf || r.sigla || r.sg_uf;
           const tot = Number(r.total_matriculas ?? r.total ?? r.matriculas ?? 0);
           if (uf) map[uf] = tot;
@@ -130,6 +132,8 @@ export default function Maps() {
           console.error("Erro ao carregar matrículas por UF", e);
           setByUF({});
         }
+      } finally {
+        setLoading(false);
       }
     })();
     return () => ac.abort();
@@ -246,6 +250,7 @@ export default function Maps() {
               className="form-select form-select-sm"
               value={ano}
               onChange={(e) => setAno(e.target.value)}
+              disabled={loading}
             >
               <option value="2024">2024</option>
               <option value="2023">2023</option>
@@ -257,7 +262,7 @@ export default function Maps() {
               <button
                 className="btn btn-sm btn-outline-primary"
                 onClick={resetFocus}
-                disabled={animating}
+                disabled={animating || loading}
               >
                 Voltar ao Brasil
               </button>
@@ -266,7 +271,7 @@ export default function Maps() {
         </div>
 
         <div
-          className="card-body"
+          className="card-body position-relative"
           style={{
             height: 600,
             display: "flex",
@@ -275,10 +280,18 @@ export default function Maps() {
             willChange: "transform",
           }}
         >
+          {loading && (
+            <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-light bg-opacity-75 z-3">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Carregando...</span>
+              </div>
+            </div>
+          )}
+
           <ComposableMap
             projection="geoMercator"
             projectionConfig={{ scale: 800 }}
-            style={{ width: "90%", height: "90%" }}
+            style={{ width: "90%", height: "90%", opacity: loading ? 0.5 : 1 }}
           >
             <ZoomableGroup center={center} zoom={zoom}>
               <Geographies geography={geoUrl}>
@@ -298,12 +311,12 @@ export default function Maps() {
                           geography={geo}
                           onClick={() => !animating && handleClick(geo)}
                           fill={exists ? color(v || 0) : "#EEE"}
-                          stroke="#bbb"
-                          strokeWidth={isSelected ? 0.6 : 0.4}
+                           stroke="#000"
+                          strokeWidth={isSelected ? 1.2 : 0.6} 
                           style={{
                             default: {
                               outline: "none",
-                              cursor: animating ? "default" : "pointer",
+                              cursor: animating || loading ? "default" : "pointer",
                               opacity: isDimmed ? 0 : 1,
                               transition:
                                 "opacity 300ms ease, fill 300ms ease, transform 300ms ease",
@@ -314,10 +327,13 @@ export default function Maps() {
                               transformOrigin: "center",
                               transformBox: "fill-box",
                             },
-                            hover: { outline: "none", opacity: isDimmed ? 0 : 0.92 },
+                            hover: { 
+                              outline: "none", 
+                              opacity: isDimmed || loading ? 0 : 0.92 
+                            },
                             pressed: { outline: "none" },
                           }}
-                          pointerEvents={isDimmed || animating ? "none" : "auto"}
+                          pointerEvents={isDimmed || animating || loading ? "none" : "auto"}
                         />
                       );
                     })}
@@ -328,6 +344,49 @@ export default function Maps() {
               </Geographies>
             </ZoomableGroup>
           </ComposableMap>
+        </div>
+
+        
+        <div className="card-footer">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <small className="text-muted">
+              {selectedUF 
+                ? `📍 ${selectedUF} - ${ano}: ${byUF[selectedUF]?.toLocaleString("pt-BR") || 0} matrículas`
+                : `📍 Brasil - ${ano}`}
+            </small>
+
+           
+            <div className="d-flex flex-column">
+              <small className="text-muted mb-1">Legenda (quantidade de matrículas):</small>
+              <div className="d-flex align-items-center">
+                {[
+                  "#e1f5fe",
+                  "#b3e5fc",
+                  "#81d4fa",
+                  "#4fc3f7",
+                  "#29b6f6",
+                  "#03a9f4",
+                  "#039be5",
+                  "#0288d1",
+                  "#01579b",
+                ].map((c, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width: 30,
+                      height: 14,
+                      backgroundColor: c,
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="d-flex justify-content-between mt-1">
+                <small className="text-muted">Menos</small>
+                <small className="text-muted">Mais</small>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
